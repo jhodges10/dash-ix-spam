@@ -5,8 +5,6 @@ import logging
 password = "admin"
 user = "admin"
 
-tx_count = 0
-rate = 0
 locked = 0
 unlocked = 0
 
