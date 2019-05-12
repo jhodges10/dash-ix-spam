@@ -3,7 +3,15 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: dash-spam-queue
+    container_name: dash-mn-payment-queue
     ports:
       - "6379:6379"
   
+  database:
+    image: sameersbn/postgresql:10
+    container_name: dash-mn-payment-db
+    environment:
+      - DB_NAME=dash-man-payments
+      - PG_TRUST_LOCALNET=true
+    ports:
+      - "5432:5432"

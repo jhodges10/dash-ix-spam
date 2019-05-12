@@ -1,3 +1,4 @@
 Redis
 python-bitcoinrpc
 rq
+rq-dashboard
