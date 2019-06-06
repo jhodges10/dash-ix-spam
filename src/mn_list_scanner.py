@@ -63,7 +63,7 @@ def get_tx_timing(block_hash):
     block_info = rpc_conn().getblock(block_hash)
     return block_info['time']
 
-def get_tx_value(tx_timestamp, dashValue, currency='USD'):
+def get_usd_value(tx_timestamp, dashValue, currency='USD'):
     tx_datetime = datetime.fromtimestamp(tx_timestamp)
     tx_date = tx_datetime.strftime('%Y-%m-%d')
     avg_price = Decimal(CryptoCompare.match_day_to_price(tx_date))
@@ -77,24 +77,20 @@ def check_tx(txid):
         tx_info = rpc_conn().gettxout(txid, 0)
     except TypeError:
         tx_info = rpc_conn().gettxout(txid, 1)
+    except Exception:
+        return None
 
-    if tx_info is None:
-        coinbase = False
-        tx_info = None
-        return coinbase, tx_info
+    clean_tx_info = dict()
 
-    else:
-        if tx_info['coinbase'] == True:
-            coinbase = True
-        else:
-            coinbase = False
-
+    if tx_info['coinbase'] == True:
         tx_info['paymentDate'] = get_tx_timing(tx_info['bestblock'])
-        tx_info['usdValue'] = get_tx_value(tx_info['paymentDate'], tx_info['value'])
+        clean_tx_info['paymentDate'] = tx_info['paymentDate'] # Re-assing paymentDate in our new dict
+        clean_tx_info['usdValue'] = get_usd_value(tx_info['paymentDate'], tx_info['value'])
+        clean_tx_info['paymentAddress'] = tx_info['scriptPubKey']['addresses'][0]
 
-        return coinbase, tx_info
+        return clean_tx_info
 
-def check_mn_wallets(masternode_wallets):
+def process_wallets(masternode_wallets):
     for masternode_vin in tqdm(masternode_wallets):
         print(masternode_vin)
         # masternode_wallets[masternode_vin]['payment_count'], masternode_wallets[masternode_vin]['payments_dict'] = check_address(masternode_wallets[masternode_vin]['payoutAddress'])
@@ -106,10 +102,28 @@ def check_mn_wallets(masternode_wallets):
     with open('payment_info_v3.json', 'w') as outfile:  
         json.dump(masternode_wallets, outfile)
 
+def process_latest_block():
+    # Add storage and check for "last block checked" to make sure we don't ever missing blocks
+    block_hash = rpc_conn().getbestblockhash()
+    block_info = rpc_conn().getblock(block_hash)
+    txes = block_info['tx']
+
+    mn_payments = list()
+    for tx in txes:
+        if check_tx(tx) != None:
+            mn_payments.append(check_tx(tx))
+
+    pprint(mn_payments)
+    return mn_payments
+
+
 if __name__ == '__main__':
-    pr_list = get_proregtx_list()
-    masternode_wallets = process_proregtx(pr_list)
-    check_mn_wallets(masternode_wallets)
+    #pr_list = get_proregtx_list()
+    #masternode_wallets = process_proregtx(pr_list)
+    #process_wallets(masternode_wallets)
+    
+    process_latest_block()
+
     # scan_blocks()
     # check_matching_tx()
     # print(redis_conn.get(29936))
