@@ -7,7 +7,7 @@ import logging
 import simplejson as json
 from pprint import pprint
 from tqdm import tqdm
-from cryptocompare import CryptoCompare
+from lib.cryptocompare import CryptoCompare
 from decimal import Decimal
 
 rpc_password = "admin"
@@ -56,21 +56,23 @@ def check_address(wallet_address):
         else:
             continue
         
-    return coinbase_tx_count, payments_dict
+    # return coinbase_tx_count, payments_dict
+    return payments_dict
 
 def get_tx_timing(block_hash):
     block_info = rpc_conn().getblock(block_hash)
     return block_info['time']
 
-def get_tx_value(tx_timestamp, dash_amt, currency='USD'):
+def get_tx_value(tx_timestamp, dashValue, currency='USD'):
     tx_datetime = datetime.fromtimestamp(tx_timestamp)
     tx_date = tx_datetime.strftime('%Y-%m-%d')
     avg_price = Decimal(CryptoCompare.match_day_to_price(tx_date))
-    tx_value_decimal = dash_amt * avg_price
+    tx_value_decimal = dashValue * avg_price
     tx_value = tx_value_decimal.quantize(Decimal('1.00'))
     return tx_value
 
 def check_tx(txid):
+    # TODO IMPROVE THIS AREA
     try:
         tx_info = rpc_conn().gettxout(txid, 0)
     except TypeError:
@@ -87,17 +89,22 @@ def check_tx(txid):
         else:
             coinbase = False
 
-        tx_info['datetime'] = get_tx_timing(tx_info['bestblock'])
-        tx_info['usd_value'] = get_tx_value(tx_info['datetime'], tx_info['value'])
+        tx_info['paymentDate'] = get_tx_timing(tx_info['bestblock'])
+        tx_info['usdValue'] = get_tx_value(tx_info['paymentDate'], tx_info['value'])
 
         return coinbase, tx_info
 
-def check_mn_wallets(payment_wallets):
-    for masternode in tqdm(payment_wallets):
-        payment_wallets[masternode]['payment_count'], payment_wallets[masternode]['payments_dict'] = check_address(payment_wallets[masternode]['payoutAddress'])
-    
-    with open('payment_info_v2.json', 'w') as outfile:  
-        json.dump(payment_wallets, outfile)
+def check_mn_wallets(masternode_wallets):
+    for masternode_vin in tqdm(masternode_wallets):
+        print(masternode_vin)
+        # masternode_wallets[masternode_vin]['payment_count'], masternode_wallets[masternode_vin]['payments_dict'] = check_address(masternode_wallets[masternode_vin]['payoutAddress'])
+        data = check_address(masternode_wallets[masternode_vin]['payoutAddress'])
+        print(data)
+        masternode_wallets[masternode_vin] = data
+
+
+    with open('payment_info_v3.json', 'w') as outfile:  
+        json.dump(masternode_wallets, outfile)
 
 if __name__ == '__main__':
     pr_list = get_proregtx_list()
