@@ -1,3 +1,5 @@
 python-bitcoinrpc
-tqdrm
+tqdm
 pprint
+flask
+flask-restplus

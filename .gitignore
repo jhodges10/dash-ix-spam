@@ -1,2 +1,5 @@
 *.pyc
 __pycache__/
+*/data/*
+.DS_store
+bootstrap.dat.zip
