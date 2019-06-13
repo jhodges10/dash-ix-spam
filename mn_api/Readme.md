@@ -4,3 +4,6 @@
 
 # attach to node and check status
 `docker exec --user dash dash_server dash-cli getinfo`
+
+# Build and push latest image
+`docker build -t jefethechefe/mn_api .`
