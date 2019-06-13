@@ -3,6 +3,7 @@ from flask_restplus import Resource, Api
 from rpc_methods import *
 import optparse
 import json
+import socket
 
 app = Flask(__name__)
 api = Api(app)
@@ -22,6 +23,8 @@ class NodeStatus(Resource):
         return {"best_block": data}
 
 if __name__ == "__main__":
+    print(socket.gethostname())
+
     parser = optparse.OptionParser(usage="python index.py -p ")
     parser.add_option('-p', '--port', action='store', dest='port', help='The port to listen on.')
     (args, _) = parser.parse_args()

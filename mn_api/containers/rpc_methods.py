@@ -2,6 +2,7 @@ from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import time, os, sys
 from pprint import pprint
 from tqdm import tqdm
+import socket
 import json
 
 # rpc_password = "admin"
@@ -15,19 +16,18 @@ def rpc_conn(user=rpc_user, password=rpc_password):
     user = "jeff"
     password = "F-1N4iKTbQ3lnL6x-am1FMdIRYPPcvodBW2BPwarHM4="
     
-    print(sys.platform)
-
     if os.getenv('RPC_IP'):
         rpc_ip = os.getenv('RPC_IP')
     elif sys.platform == 'darwin':
-        # print(sys.platform)
-        # rpc_ip = "127.0.0.1"
         rpc_ip = "localhost"
         # rpc_ip = "157.230.74.15" # testing ip
     else:
         # Running in docker by docker-compose start, connect via hostname
-        rpc_ip = "dash_node"
+        rpc_ip = "dash_server"
     
+    user = "jeff"
+    password = "jeff"
+
     print(rpc_ip)
     print("http://%s:%s@%s:9998" % (user, password, rpc_ip))
 
