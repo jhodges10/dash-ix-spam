@@ -17,7 +17,7 @@ class CryptoCompare:
         #file_age = time.strftime('%m/%d/%Y', time.gmtime(os.path.getmtime(storage_location)))
 
         if use_cache and os.path.isfile(storage_location):
-                day_and_price_dict = CryptoCompare.c_read_json("price_history")
+            day_and_price_dict = CryptoCompare.c_read_json("price_history")
         else:
             url = "https://min-api.cryptocompare.com/data/histoday"
             querystring = {"fsym": "DASH", "tsym": "USD", "limit": "{}".format(days_to_fetch), "e": "CCCAGG"}
@@ -53,7 +53,7 @@ class CryptoCompare:
             day_and_price = CryptoCompare.fetch_price_history_dict(use_cache=True)
             price = day_and_price[date]
         except KeyError as e:
-            print(e)
+            print("KeyError", e)
             try:
                 # If we fail the first time, we go back and try it without the cache
                 day_and_price = CryptoCompare.fetch_price_history_dict(use_cache=False)
@@ -61,7 +61,7 @@ class CryptoCompare:
             except KeyError as e:
                 # Fetch current price because it's from today, that's why we couldn't get historical data
                 price = CryptoCompare.fetch_cur_price()
-                print(e)
+                print("KeyError", e)
 
         return price
 

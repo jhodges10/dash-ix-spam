@@ -13,7 +13,6 @@ from decimal import Decimal
 rpc_password = "admin"
 rpc_user = "admin"
 
-coinbase_tx_count = 0
 
 def rpc_conn(user=rpc_user, password=rpc_password):
     rpc_conn = AuthServiceProxy("http://%s:%s@localhost:19998" % (user, password))
@@ -68,7 +67,7 @@ def get_usd_value(tx_timestamp, dashValue, currency='USD'):
     tx_date = tx_datetime.strftime('%Y-%m-%d')
     avg_price = Decimal(CryptoCompare.match_day_to_price(tx_date))
     tx_value_decimal = dashValue * avg_price
-    tx_value = tx_value_decimal.quantize(Decimal('1.00'))
+    tx_value = str(tx_value_decimal.quantize(Decimal('1.00')))
     return tx_value
 
 def check_tx(txid):
@@ -83,10 +82,11 @@ def check_tx(txid):
     clean_tx_info = dict()
 
     if tx_info['coinbase'] == True:
-        tx_info['paymentDate'] = get_tx_timing(tx_info['bestblock'])
-        clean_tx_info['paymentDate'] = tx_info['paymentDate'] # Re-assing paymentDate in our new dict
-        clean_tx_info['usdValue'] = get_usd_value(tx_info['paymentDate'], tx_info['value'])
+        tx_info['paymentTimestamp'] = get_tx_timing(tx_info['bestblock'])
+        clean_tx_info['paymentTimestamp'] = tx_info['paymentTimestamp'] # Re-assing paymentDate in our new dict
+        clean_tx_info['usdValue'] = get_usd_value(tx_info['paymentTimestamp'], tx_info['value'])
         clean_tx_info['paymentAddress'] = tx_info['scriptPubKey']['addresses'][0]
+        clean_tx_info['dashValue'] = str(tx_info['value'])
 
         return clean_tx_info
 
@@ -102,6 +102,7 @@ def process_wallets(masternode_wallets):
     with open('payment_info_v3.json', 'w') as outfile:  
         json.dump(masternode_wallets, outfile)
 
+# This would be set to run every x minutes as a python lambda function, deployed via Terraform
 def process_latest_block():
     # Add storage and check for "last block checked" to make sure we don't ever missing blocks
     block_hash = rpc_conn().getbestblockhash()
@@ -112,6 +113,8 @@ def process_latest_block():
     for tx in txes:
         if check_tx(tx) != None:
             mn_payments.append(check_tx(tx))
+        else:
+            continue
 
     pprint(mn_payments)
     return mn_payments

@@ -26,14 +26,6 @@ infra-restart: infra-stop infra
 
 run:
 	$(call log,"Starting spam service ...")
-	python3 ixspam.py
-	sleep 2
-	$(call log,"Started spam service ...")
-	$(call log,"Starting worker ...")
-	rq-worker
-	sleep 2
-	$(call log,"Started  worker ...")
-	$(call log,"Starting dashboard ...")
 	rq-dashboard
 	sleep 2
 	$(call log,"Started dashboard ...")
