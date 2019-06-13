@@ -15,3 +15,29 @@ services:
       - PG_TRUST_LOCALNET=true
     ports:
       - "5432:5432"
+
+  manager:
+    container_name: api
+    image: jefethechefe/mn_api
+    ports:
+      - 80:5000
+    links:
+      - "dash_server:dash_server"
+
+  dash_server:
+    container_name: dash_server
+    image: jefethechefe/docker-dashd-nexus
+    command: ["server=1", "testnet=0", "rpcport=9998", "rpcaddr=0.0.0.0", "rpcallowip=0.0.0.0/0", "rpcpauth=jeff:5cc5fa5bb15f5675603c36fdb7dccd9a$$6b8223c1d5b23d38f2067ec1ef6450b773dd188f208d8136bc96804488a92ee7"]
+    ports:
+      - 9998:9998
+    volumes:
+      - ${PWD}/mn_api/data:/home/dash/.dashcore
+      - type: bind
+        source: ./mn_api/dash.conf
+        target: /home/dash/.dashcore/dash.conf
+      - type: bind
+        source: ./mn_api/bootstrap.dat.zip
+        target: /home/dash/.dashcore/bootstrap.dat.zip
+  
+volumes:
+  data:

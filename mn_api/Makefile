@@ -5,27 +5,16 @@ now = `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 latest = `date -u +"%Y-%m-%d"`
 log = echo "$(now) $(1)"
 
+build:
+	IMAGE=${IMAGE} bash scripts/build.sh
 
-# -- Prep --
-bootstrap:
-	$(call log,"Fetching bootstrap file ...")
-	curl -O https://dash-bootstrap.ams3.digitaloceanspaces.com/mainnet/$(latest)/bootstrap.dat.zip
+test:
+	IMAGE=${IMAGE} bash scripts/test.sh
 
-# -- Prep --
-bootstrap-testnet:
-	$(call log,"Fetching bootstrap file ...")
-	curl -O https://dash-bootstrap.ams3.digitaloceanspaces.com/testnet/$(latest)/bootstrap.dat.zip
-	mv bootstrap.dat.zip /data/testnet3/bootstrap.dat.zip
+tags:
+	IMAGE=${IMAGE} bash scripts/tags.sh
 
-infra:
-	$(call log,"Starting services ...")
-	docker-compose up -d --force-recreate && \
-	sleep 2 && \
-	$(call log,"Services started.")
+publish:
+	docker push ${IMAGE}
 
-infra-stop:
-	$(call log,"Stopping services ...")
-	docker-compose stop
-	$(call log,"Services stopped.")
-
-infra-restart: infra-stop infra
+.PHONY: force

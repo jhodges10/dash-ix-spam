@@ -2,11 +2,18 @@
 SHELL := sh
 
 now = `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+latest = `date -u +"%Y-%m-%d"`
 log = echo "$(now) $(1)"
 
-install: pip3 install -r requirements.txt
+# -- Prep --
+bootstrap:
+	$(call log,"Fetching bootstrap file ...")
+	curl -O https://dash-bootstrap.ams3.digitaloceanspaces.com/mainnet/$(latest)/bootstrap.dat.zip
 
-# -- Database --
+bootstrap-testnet:
+	$(call log,"Fetching bootstrap file ...")
+	curl -O https://dash-bootstrap.ams3.digitaloceanspaces.com/testnet/$(latest)/bootstrap.dat.zip
+	mv bootstrap.dat.zip /mn_api/data/testnet3/bootstrap.dat.zip
 
 # -- Infra --
 infra:
