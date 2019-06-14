@@ -3,3 +3,4 @@ tqdm
 pprint
 flask
 flask-restplus
+requests
