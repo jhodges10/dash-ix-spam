@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restplus import Resource, Api
 from rpc_methods import *
+from insight import check_insight_block_count
 import optparse
 import json
 import socket
@@ -19,8 +20,9 @@ class VotingKeyAddresss(Resource):
 class NodeStatus(Resource):
     def get(self):
         print("Fetching node status")
-        data = get_best_block()
-        return {"best_block": data}
+        cur_block = get_best_block()
+        highest_block = check_insight_block_count()
+        return {"sync_progress": f"{cur_block}/{highest_block}"}
 
 if __name__ == "__main__":
     print(socket.gethostname())
