@@ -2,42 +2,30 @@ from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import time, os, sys
 from pprint import pprint
 from tqdm import tqdm
-import socket
 import json
 
 # rpc_password = "admin"
 # rpc_user = "admin"
 
-rpc_user = "jeff"
-rpc_password = "jeff"
+rpc_user = "dashrpc"
+rpc_password = "password"
 testnet = False
 
 def rpc_conn(user=rpc_user, password=rpc_password):
-    user = "jeff"
-    password = "F-1N4iKTbQ3lnL6x-am1FMdIRYPPcvodBW2BPwarHM4="
-    
     if os.getenv('RPC_IP'):
-        rpc_ip = os.getenv('RPC_IP')
-    elif sys.platform == 'darwin':
-        rpc_ip = "localhost"
-        # rpc_ip = "157.230.74.15" # testing ip
+        rpc_hostname = os.getenv('RPC_IP')
     else:
-        # Running in docker by docker-compose start, connect via hostname
-        rpc_ip = "dash_server"
-    
-    user = "jeff"
-    password = "jeff"
+        rpc_hostname = "dash_server"
 
-    print(rpc_ip)
-    print("http://%s:%s@%s:9998" % (user, password, rpc_ip))
+    if os.getenv('RPC_PORT'):
+        rpc_port = os.getenv('RPC_PORT')
+    else:
+        rpc_port = 9998
 
     if testnet == False:
-        try:
-            rpc_conn = AuthServiceProxy("http://%s:%s@%s:9998" % (user, password, rpc_ip))
-        except:
-            rpc_conn = AuthServiceProxy("http://%s:%s@%s:9998" % (user, password, 'localhost'))
+        rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
     else:
-        rpc_conn = AuthServiceProxy("http://%s:%s@%s:19998" % (user, password, 'localhost'))
+        rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_ip}:{rpc_port}")
 
     return rpc_conn
 
