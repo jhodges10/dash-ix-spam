@@ -7,8 +7,6 @@ services:
     ports:
       - "6379:6379"
 
-    
-  
   database:
     container_name: dash-mn-payment-db
     image: sameersbn/postgresql:10
@@ -22,7 +20,9 @@ services:
     container_name: api
     environment:
       - RPC_PORT=9998
-    image: jefethechefe/mn_api
+    build:
+      context: ./containers/mn_api
+      dockerfile: Dockerfile
     ports:
       - 80:5000
     links:

@@ -20,16 +20,14 @@ def rpc_conn(user=rpc_user, password=rpc_password):
     else:
         # rpc_hostname = "dash_server"
         rpc_hostname = 'localhost'
+        
     if os.getenv('RPC_PORT'):
         rpc_port = os.getenv('RPC_PORT')
     else:
         # rpc_port = 9998
         rpc_port = 19998
 
-    if testnet == False:
-        rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
-    else:
-        rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
+    rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
 
     return rpc_conn
 
