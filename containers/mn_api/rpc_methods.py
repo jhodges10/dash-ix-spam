@@ -12,14 +12,13 @@ import json
 
 rpc_user = "dashrpc"
 rpc_password = "password"
-testnet = True
 
 def rpc_conn(user=rpc_user, password=rpc_password):
     if os.getenv('RPC_IP'):
         rpc_hostname = os.getenv('RPC_IP')
     else:
-        # rpc_hostname = "dash_server"
-        rpc_hostname = 'localhost'
+        rpc_hostname = "dash_server"
+        # rpc_hostname = 'localhost'
         
     if os.getenv('RPC_PORT'):
         rpc_port = os.getenv('RPC_PORT')
@@ -57,12 +56,15 @@ def get_prgtx_info():
 def get_mn_csv():
     mn_list = list()
     mn_dict = rpc_conn().masternodelist()
+
     for node in mn_dict:
         new_dict = dict()
         new_dict = mn_dict[node]
         new_dict['masternodevin'] = node
         mn_list.append(new_dict)
+    
     mn_df = DataFrame.from_records(mn_list)
+    
     return mn_df.to_csv(index=False)
 
 def write_json(data, filename):
@@ -81,5 +83,5 @@ if __name__ == "__main__":
     # pprint(get_prgtx_info())
     # prgtx_data = get_prgtx_info()
     # Database.insert_protx_info(prgtx_data)
-    get_mn_csv()
+    # get_mn_csv()
     pass
