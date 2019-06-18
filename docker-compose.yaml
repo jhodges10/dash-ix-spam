@@ -22,9 +22,7 @@ services:
     container_name: api
     environment:
       - RPC_PORT=9998
-    build:
-      context: ./containers/mn_api
-      dockerfile: Dockerfile
+    image: jefethechefe/mn_api
     ports:
       - 80:5000
     links:
