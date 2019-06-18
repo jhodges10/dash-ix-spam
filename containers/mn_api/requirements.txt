@@ -4,3 +4,5 @@ pprint
 flask
 flask-restplus
 requests
+psycopg2
+pandas

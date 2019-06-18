@@ -6,12 +6,14 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+
+    
   
   database:
     container_name: dash-mn-payment-db
     image: sameersbn/postgresql:10
     environment:
-      - DB_NAME=dash-man-payments
+      - DB_NAME=dash_mns
       - PG_TRUST_LOCALNET=true
     ports:
       - "5432:5432"
