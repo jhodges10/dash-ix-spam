@@ -1,7 +1,9 @@
 from flask import Flask
+from flask import make_response
 from flask_restplus import Resource, Api
 from rpc_methods import *
 from insight import check_insight_block_count
+from db_conn import Database
 import optparse
 import json
 import socket
@@ -16,6 +18,17 @@ class VotingKeyAddresss(Resource):
         data = get_prgtx_info()
         return data
 
+
+@api.route('/protx_list')
+class ProtxList(Resource):
+    def get(self):
+        print("Fetching Protx info")
+        data = Database.get_protx_info()
+        for row in data:
+            print(row.keys())
+        return data
+
+
 @api.route('/status')
 class NodeStatus(Resource):
     def get(self):
@@ -23,6 +36,16 @@ class NodeStatus(Resource):
         cur_block = get_best_block()
         highest_block = check_insight_block_count()
         return {"sync_progress": f"{cur_block}/{highest_block}"}
+
+
+@api.route('/mn_csv')
+class MasternodeCSV(Resource):
+    def get(self):
+        print("Fetching masternode list status")
+        output = make_response(get_mn_csv())
+        output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        output.headers["Content-type"] = "text/csv"
+        return output
 
 if __name__ == "__main__":
     print(socket.gethostname())
