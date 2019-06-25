@@ -5,7 +5,7 @@ from rpc_methods import *
 from insight import check_insight_block_count
 from db_conn import Database
 import optparse
-import json
+import simplejson as json
 import socket
 
 app = Flask(__name__)
@@ -41,11 +41,21 @@ class NodeStatus(Resource):
 @api.route('/mn_csv')
 class MasternodeCSV(Resource):
     def get(self):
-        print("Fetching masternode list status")
+        print("Fetching masternode list as CSV")
         output = make_response(get_mn_csv())
         output.headers["Content-Disposition"] = "attachment; filename=export.csv"
         output.headers["Content-type"] = "text/csv"
         return output
+
+@api.route('/mn_json')
+class MasternodeJSON(Resource):
+    def get(self):
+        print("Fetching masternode list as JSON")
+        mn_info = get_prgtx_json()
+        output = make_response(json.dumps(mn_info, use_decimal=True))
+        output.headers["Content-type"] = "application/json"
+        return output
+
 
 if __name__ == "__main__":
     print(socket.gethostname())

@@ -6,3 +6,4 @@ flask-restplus
 requests
 psycopg2
 pandas
+simplejson

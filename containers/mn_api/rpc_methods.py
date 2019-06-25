@@ -17,14 +17,15 @@ def rpc_conn(user=rpc_user, password=rpc_password):
     if os.getenv('RPC_IP'):
         rpc_hostname = os.getenv('RPC_IP')
     else:
+        # SET THIS BACK TO DASH_SERVER BEFORE COMMITTING
         rpc_hostname = "dash_server"
         # rpc_hostname = 'localhost'
         
     if os.getenv('RPC_PORT'):
         rpc_port = os.getenv('RPC_PORT')
     else:
-        # rpc_port = 9998
-        rpc_port = 19998
+        rpc_port = 9998
+        # rpc_port = 19998
 
     rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
 
@@ -35,7 +36,7 @@ def get_best_block():
     return latest_block
 
 def get_proregtx_list():
-    info = rpc_conn().protx('list')
+    info = rpc_conn().protx('list', 'valid')
     return info
 
 def get_prgtx_info():
@@ -47,11 +48,25 @@ def get_prgtx_info():
 
         # vin = str(node_info['collateralHash']) + '-' + str(node_info['collateralIndex']) # define vin
         # big_dict[vin] = node_info['state']['votingAddress']
-
         protx_list.append(node_info)
 
-    # write_json(big_dict, 'masternode_info')
-    return protx_list
+    return json.loads(protx_list)
+
+def get_prgtx_json():
+    protxlist = get_proregtx_list()
+    big_dict = dict()
+    protx_list = list()
+    for node in tqdm(protxlist):
+        node_info = rpc_conn().protx('info', node)
+
+        # vin = str(node_info['collateralHash']) + '-' + str(node_info['collateralIndex']) # define vin
+        # big_dict[vin] = node_info['state']['votingAddress']
+
+        big_dict[node] = node_info
+    
+    print(type(big_dict))
+
+    return big_dict
 
 def get_mn_csv():
     mn_list = list()
