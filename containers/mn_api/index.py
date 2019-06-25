@@ -1,8 +1,8 @@
 from flask import Flask
 from flask import make_response
 from flask_restplus import Resource, Api
-from rpc_methods import *
-from insight import check_insight_block_count
+from lib.rpc_methods import *
+from lib.insight import check_insight_block_count
 from db_conn import Database
 import optparse
 import simplejson as json
