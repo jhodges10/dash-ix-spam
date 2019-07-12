@@ -4,14 +4,25 @@ from flask_restplus import Resource, Api
 from lib.rpc_methods import *
 from lib.insight import check_insight_block_count
 from db_conn import Database
+from celery import Celery
 import optparse
 import simplejson as json
 import socket
 
 app = Flask(__name__)
-api = Api(app)
+app = Api(app)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
-@api.route('/mn_vkeys')
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+# TODO implement celery
+# https://github.com/miguelgrinberg/flask-celery-example/blob/master/app.py
+# https://blog.miguelgrinberg.com/post/using-celery-with-flask
+
+
+@app.route('/mn_vkeys')
 class VotingKeyAddresss(Resource):
     def get(self):
         print("Fetching voting keys")
@@ -19,7 +30,7 @@ class VotingKeyAddresss(Resource):
         return data
 
 
-@api.route('/protx_list')
+@app.route('/protx_list')
 class ProtxList(Resource):
     def get(self):
         print("Fetching Protx info")
@@ -29,7 +40,7 @@ class ProtxList(Resource):
         return data
 
 
-@api.route('/status')
+@app.route('/status')
 class NodeStatus(Resource):
     def get(self):
         print("Fetching node status")
@@ -38,7 +49,7 @@ class NodeStatus(Resource):
         return {"sync_progress": f"{cur_block}/{highest_block}"}
 
 
-@api.route('/mn_csv')
+@app.route('/mn_csv')
 class MasternodeCSV(Resource):
     def get(self):
         print("Fetching masternode list as CSV")
@@ -47,7 +58,7 @@ class MasternodeCSV(Resource):
         output.headers["Content-type"] = "text/csv"
         return output
 
-@api.route('/mn_json')
+@app.route('/mn_json')
 class MasternodeJSON(Resource):
     def get(self):
         print("Fetching masternode list as JSON")
