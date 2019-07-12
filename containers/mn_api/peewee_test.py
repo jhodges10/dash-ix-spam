@@ -86,14 +86,12 @@ class Masternode(BaseModel):
         }
         return data
 
-
     @property
     def rank(self):
         data = {
             'payment_rank': self.payment_rank,
         }
         return data
-
 
     def __repr__(self):
         return "{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}".format(

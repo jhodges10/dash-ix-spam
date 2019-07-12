@@ -4,7 +4,7 @@ from pprint import pprint
 from pandas import DataFrame
 from pandas.io.json import json_normalize
 from tqdm import tqdm
-from lib.db_conn import Database
+from db_conn import Database
 import json
 
 # rpc_password = "admin"
@@ -18,14 +18,14 @@ def rpc_conn(user=rpc_user, password=rpc_password):
         rpc_hostname = os.getenv('RPC_IP')
     else:
         # SET THIS BACK TO DASH_SERVER BEFORE COMMITTING
-        rpc_hostname = "dash_server"
-        # rpc_hostname = 'localhost'
+        # rpc_hostname = "dash_server"
+        rpc_hostname = 'localhost'
         
     if os.getenv('RPC_PORT'):
         rpc_port = os.getenv('RPC_PORT')
     else:
-        rpc_port = 9998
-        # rpc_port = 19998
+        # rpc_port = 9998
+        rpc_port = 19998
 
     rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
 

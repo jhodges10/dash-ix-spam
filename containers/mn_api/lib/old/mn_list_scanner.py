@@ -60,32 +60,6 @@ def get_usd_value(tx_timestamp, dashValue, currency='USD'):
     tx_value = str(tx_value_decimal.quantize(Decimal('1.00')))
     return tx_value
 
-def check_tx(txid):
-    # TODO IMPROVE THIS AREA
-    try:
-        tx_info = rpc_conn().gettxout(txid, 0)
-    except TypeError:
-        tx_info = rpc_conn().gettxout(txid, 1)
-        return None
-    except Exception:
-        return None
-
-    clean_tx_info = dict()
-    coinbase_tx = False
-
-    try:           
-        if tx_info['coinbase'] == True:
-            tx_info['paymentTimestamp'] = get_tx_timing(tx_info['bestblock'])
-            clean_tx_info['paymentTimestamp'] = tx_info['paymentTimestamp'] # Re-assing paymentDate in our new dict
-            clean_tx_info['usdValue'] = get_usd_value(tx_info['paymentTimestamp'], tx_info['value'])
-            clean_tx_info['paymentAddress'] = tx_info['scriptPubKey']['addresses'][0]
-            clean_tx_info['dashValue'] = str(tx_info['value'])
-            coinbase_tx = True
-    except:
-        pass    
-
-    return coinbase_tx, clean_tx_info
-
 def process_wallets(masternode_wallets):
     for masternode_vin in tqdm(masternode_wallets):
         # print(masternode_vin)
@@ -97,7 +71,6 @@ def process_wallets(masternode_wallets):
     with open('payment_info_v3.json', 'w') as outfile:  
         json.dump(masternode_wallets, outfile)
 
-# This would be set to run every x minutes as a python lambda function, deployed via Terraform
 def process_latest_block():
     # Add storage and check for "last block checked" to make sure we don't ever missing blocks
     block_hash = rpc_conn().getbestblockhash()
@@ -116,10 +89,12 @@ def process_latest_block():
 
 
 if __name__ == '__main__':
-    pr_list = get_proregtx_list()
-    masternode_wallets = process_proregtx(pr_list)
-    process_wallets(masternode_wallets)
+    # pr_list = get_proregtx_list()
+    # masternode_wallets = process_proregtx(pr_list)
+    # process_wallets(masternode_wallets)
     
+    check_tx('3fcc6bdaf487c6ead6b8ae17f42d6ed2dd76d728df991f98d984639d07837f3d')
+
     # process_latest_block()
 
     # scan_blocks()

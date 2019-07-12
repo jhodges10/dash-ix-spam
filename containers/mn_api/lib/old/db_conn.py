@@ -5,7 +5,7 @@ import logging
 import time
 import traceback
 from datetime import datetime
-from lib.settings import DB_DEF
+from settings import DB_DEF
 
 
 class Database:
