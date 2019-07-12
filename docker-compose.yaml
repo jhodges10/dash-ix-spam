@@ -19,6 +19,7 @@ services:
   manager:
     container_name: api
     environment:
+      - RPC_HOSTNAME='dash_server'
       - RPC_PORT=9998
     build:
       context: ./containers/mn_api

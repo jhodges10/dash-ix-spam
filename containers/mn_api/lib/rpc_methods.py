@@ -14,18 +14,8 @@ rpc_user = "dashrpc"
 rpc_password = "password"
 
 def rpc_conn(user=rpc_user, password=rpc_password):
-    if os.getenv('RPC_IP'):
-        rpc_hostname = os.getenv('RPC_IP')
-    else:
-        # SET THIS BACK TO DASH_SERVER BEFORE COMMITTING
-        # rpc_hostname = "dash_server"
-        rpc_hostname = 'localhost'
-        
-    if os.getenv('RPC_PORT'):
-        rpc_port = os.getenv('RPC_PORT')
-    else:
-        # rpc_port = 9998
-        rpc_port = 19998
+    rpc_hostname = os.getenv('RPC_HOSTNAME', default='localhost')        
+    rpc_port = os.getenv('RPC_PORT', default=19998)
 
     rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
 
