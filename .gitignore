@@ -4,3 +4,5 @@ containers/dashd/data/*
 .DS_store
 bootstrap.dat.zip
 dashcore-0.14.0/
+.vscode/*
+.vscode/

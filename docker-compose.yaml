@@ -9,14 +9,32 @@ services:
 
   database:
     container_name: dash-mn-payment-db
-    image: sameersbn/postgresql:10
+    image: postgres:latest
     environment:
-      - DB_NAME=dash_mns
       - PG_TRUST_LOCALNET=true
+      - POSTGRES_USER=dash
+      - POSTGRES_PASSWORD=dash
+      - POSTGRES_DB=dash_mns
     ports:
-      - "5432:5432"
+      - "42069:42069"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
 
-  manager:
+  hasura:
+    container_name: smartscrape-hasura
+    image: hasura/graphql-engine:v1.0.0-beta.2
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "database"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://dash:dash@dash-mn-payments-db:42069/dash_mns
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## uncomment next line to set an admin secret
+      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+
+  api:
     container_name: api
     environment:
       - RPC_HOSTNAME='dash_server'
@@ -29,11 +47,26 @@ services:
     links:
       - dash_server
 
+  zmq:
+    container_name: zmq
+    environment:
+      - RPC_HOSTNAME='dash_server'
+      - RPC_PORT='19998'
+      - RPC_USER='dashrpc'
+      - RPC_PASSWORD='password'
+    build:
+      context: ./containers/zmq_consumer
+      dockerfile: Dockerfile
+    links:
+      - dash_server
+
   dash_server:
     container_name: dash_server
     image: dashpay/dashd:latest
     restart: always
     user: "0"
+    ports:
+      - 28332:28332
     volumes:
       - $PWD/dash.conf:/dash/.dashcore/dash.conf:ro
       - $PWD/containers/dashd/data:/dash/.dashcore/
@@ -42,3 +75,5 @@ services:
 
 volumes:
   data:
+  postgres-data:
+    driver: local

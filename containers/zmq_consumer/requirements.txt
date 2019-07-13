@@ -1,0 +1,7 @@
+pyzmq
+requests
+python-bitcoinrpc
+tqdm
+pprint
+pandas
+simplejson

@@ -290,4 +290,4 @@ if __name__ == '__main__':
     # update_masternode_list()
 
     # Run app
-    app.run()
+    app.run(port=5000)

@@ -3,7 +3,6 @@ from flask import make_response
 from flask_restplus import Resource, Api
 from lib.rpc_methods import *
 from lib.insight import check_insight_block_count
-from db_conn import Database
 from celery import Celery
 import optparse
 import simplejson as json
@@ -29,7 +28,7 @@ class VotingKeyAddresss(Resource):
         data = get_prgtx_info()
         return data
 
-
+"""
 @app.route('/protx_list')
 class ProtxList(Resource):
     def get(self):
@@ -38,7 +37,7 @@ class ProtxList(Resource):
         for row in data:
             print(row.keys())
         return data
-
+"""
 
 @app.route('/status')
 class NodeStatus(Resource):
