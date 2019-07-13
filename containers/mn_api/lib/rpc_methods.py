@@ -7,17 +7,12 @@ from tqdm import tqdm
 from old.db_conn import Database
 import json
 
-# rpc_password = "admin"
-# rpc_user = "admin"
-
-rpc_user = "dashrpc"
-rpc_password = "password"
-
-def rpc_conn(user=rpc_user, password=rpc_password):
+def rpc_conn():
     rpc_hostname = os.getenv('RPC_HOSTNAME', default='localhost')        
     rpc_port = os.getenv('RPC_PORT', default=19998)
-    
-    rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_hostname}:{rpc_port}")
+    rpc_user = os.getenv('RPC_USER', default='dashrpc')
+    rpc_pass = os.getenv('RPC_PASSWORD', default='password')
+    rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_pass}@{rpc_hostname}:{rpc_port}")
 
     return rpc_conn
 

@@ -35,11 +35,18 @@ class ZMQHandler():
           msgSequence = struct.unpack('<I', msg[-1])[-1]
           sequence = str(msgSequence)
         if topic == b"hashblock":
+            # Print this for debugging
             print('- HASH BLOCK ('+sequence+') -')
+            print(binascii.hexlify(body).decode("utf-8"))
+
+            # Update masternode list and wallets, then process the block for mn payments
             latest_block = binascii.hexlify(body).decode("utf-8")
             self.bp.refresh_mn_info() # We have to make sure we update the masternode wallets list each block
             paid_mn = self.bp.process_block(latest_block)
+
+            # Send the information we get back to the database
             print(f"Submitting payment to database for: {paid_mn}")
+            
         elif topic == b"hashgovernancevote":
             print('- HASH GOVERNANCE VOTE ('+sequence+') -')
             print(binascii.hexlify(body).decode("utf-8"))

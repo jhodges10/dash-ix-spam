@@ -12,7 +12,6 @@ def rpc_conn():
     rpc_port = os.getenv('RPC_PORT', default=19998)
     rpc_user = os.getenv('RPC_USER', default='dashrpc')
     rpc_pass = os.getenv('RPC_PASSWORD', default='password')
-    
     rpc_conn = AuthServiceProxy(f"http://{rpc_user}:{rpc_pass}@{rpc_hostname}:{rpc_port}")
 
     return rpc_conn
