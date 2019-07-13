@@ -2,13 +2,13 @@ version: '3.3'
 services:
 
   redis:
-    container_name: dash-mn-payment-queue
+    container_name: mn_queue
     image: redis:alpine
     ports:
       - "6379:6379"
 
   database:
-    container_name: dash-mn-payment-db
+    container_name: mn_database
     image: postgres:latest
     environment:
       - PG_TRUST_LOCALNET=true
@@ -21,7 +21,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
   hasura:
-    container_name: smartscrape-hasura
+    container_name: mn_api_hasura
     image: hasura/graphql-engine:v1.0.0-beta.2
     ports:
     - "8080:8080"
@@ -29,13 +29,13 @@ services:
     - "database"
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://dash:dash@dash-mn-payments-db:42069/dash_mns
+      HASURA_GRAPHQL_DATABASE_URL: postgres://dash:dash@mn_database:42069/dash_mns
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
 
   api:
-    container_name: api
+    container_name: mn_api
     environment:
       - RPC_HOSTNAME='dash_server'
       - RPC_PORT=9998
@@ -48,7 +48,7 @@ services:
       - dash_server
 
   zmq:
-    container_name: zmq
+    container_name: mn_zmq
     environment:
       - RPC_HOSTNAME='dash_server'
       - RPC_PORT='19998'
@@ -61,7 +61,7 @@ services:
       - dash_server
 
   dash_server:
-    container_name: dash_server
+    container_name: mn_dash_server
     image: dashpay/dashd:latest
     restart: always
     user: "0"
