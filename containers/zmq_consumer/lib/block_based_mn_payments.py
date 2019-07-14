@@ -8,12 +8,22 @@ import simplejson as json
 from pprint import pprint
 from tqdm import tqdm
 from decimal import Decimal
-from rpc_methods import rpc_conn
+from lib.rpc_methods import rpc_conn
 
 class BlockPayment:
     def __init__(self):
-        self.mn_list = rpc_conn().masternodelist()
+        self.mn_list = self.get_mn_list()
         self.mn_wallets = self.get_mn_wallets()
+
+    @staticmethod
+    def get_mn_list():
+        try:
+            mn_list = rpc_conn().masternodelist()
+        except Exception as e:
+            print(e)
+            mn_list = []
+        
+        return mn_list
 
     def get_mn_wallets(self):
         # wallets should be key/value pair of vin -> payee
@@ -21,10 +31,11 @@ class BlockPayment:
 
         mn_list = self.mn_list
         mn_wallets = set()
-
-        for node in mn_list:
-            mn_wallets.add(mn_list[node]['payee'])
-
+        try:
+            for node in mn_list:
+                mn_wallets.add(mn_list[node]['payee'])
+        except:
+            pass
         return mn_wallets
 
     def check_tx(self, txid):

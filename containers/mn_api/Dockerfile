@@ -13,7 +13,7 @@ RUN pip install -r /requirements.txt
 
 FROM pip
 
-COPY . .
+COPY . /bin
 EXPOSE 5000
 
 CMD ["python", "/bin/peewee_test.py", "-p 5000"]

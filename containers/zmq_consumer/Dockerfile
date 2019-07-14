@@ -1,10 +1,10 @@
-FROM python:3-alpine as base
+FROM python:3-slim as base
 
 FROM base as pip
-COPY requirements.txt bin/requirements.txt
-RUN pip install -r bin/requirements.txt
+COPY requirements.txt zmq/requirements.txt
+RUN pip install -r zmq/requirements.txt
 
 FROM pip
-COPY . /bin
+COPY . zmq/bin/
 
-CMD ["python", "/bin/zmq_test.py"]
+CMD ["python", "zmq/bin/zmq_worker.py"]

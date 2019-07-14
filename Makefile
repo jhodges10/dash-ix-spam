@@ -13,7 +13,7 @@ bootstrap:
 bootstrap-testnet:
 	$(call log,"Fetching bootstrap file ...")
 	curl -O https://dash-bootstrap.ams3.digitaloceanspaces.com/testnet/$(latest)/bootstrap.dat.zip
-	mv bootstrap.dat.zip /mn_api/data/testnet3/bootstrap.dat.zip
+	mv bootstrap.dat.zip /cointainers/dashd/data/testnet3/bootstrap.dat.zip
 
 # -- Infra --
 infra:

@@ -5,8 +5,9 @@ import zmq.asyncio
 import signal
 import struct
 import sys
-from send_to_graphql import add_payment
-from block_based_mn_payments import BlockPayment
+import os
+from lib.send_to_graphql import add_payment
+from lib.block_based_mn_payments import BlockPayment
 
 if not (sys.version_info.major >= 3 and sys.version_info.minor >= 4):
     print("This example only works with Python 3.4 and greater")
@@ -23,7 +24,8 @@ class ZMQHandler():
         self.zmqSubSocket.setsockopt_string(zmq.SUBSCRIBE, "hashblock")
         self.zmqSubSocket.setsockopt_string(zmq.SUBSCRIBE, "hashgovernancevote")
         self.zmqSubSocket.setsockopt_string(zmq.SUBSCRIBE, "hashgovernanceobject")
-        self.zmqSubSocket.connect("tcp://127.0.0.1:%i" % port)
+        print(os.getenv('RPC_HOSTNAME', default='127.0.0.1'))
+        self.zmqSubSocket.connect(f"tcp://{os.getenv('RPC_HOSTNAME', default='127.0.0.1')}:{port}")
 
     @asyncio.coroutine
     def handle(self) :
